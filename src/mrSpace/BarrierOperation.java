@@ -20,7 +20,7 @@ public class BarrierOperation {
 	final public static int BOTTOM = 0;
 	private static Random random = new Random();
 	private Barrier topBarrier = null;
-	private Barrier buttomBarrier;
+	private Barrier bottomBarrier;
 
 	private int[] offset;
 	private boolean[] livingSpace;
@@ -35,12 +35,24 @@ public class BarrierOperation {
 
 	private FallingAnimationListener fallingAnimationListener = new FallingAnimationListener();
 	private Timer fallingAnimationTimer = new Timer(5, fallingAnimationListener);
-	private int holdDuration = 1000;
-	private int yVelocity = 50;
+	private int fallingVeloctiy = 50;
 
+	private RisingAnimationListener risingAnimationListener = new RisingAnimationListener();
+	private Timer risingAnimationTimer = new Timer(5, risingAnimationListener);
+	private int risingVelocity = 50;
+	
+	private PreparationAnimationListener preparationAnimationListener = new PreparationAnimationListener();
+	private Timer preparationAnimationTimer = new Timer(5, preparationAnimationListener);
+	private int preparationVelocity = 50;
+	
+	private HoldDurationListener holdDurationListener = new HoldDurationListener();
+	private int holdDuration = 1000;
+	private Timer holdDurationTimer = new Timer(holdDuration,holdDurationListener); 
+	
+	
 	BarrierOperation(Game gameinput) {
 		topBarrier = new Barrier();
-		buttomBarrier = new Barrier();
+		bottomBarrier = new Barrier();
 		offset = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		livingSpace = new boolean[] { false, false, false, false, false,
 				false, false, false, false, false, false, false };
@@ -50,7 +62,7 @@ public class BarrierOperation {
 
 	public void randomBarrier() {
 		topBarrier.refresh();
-		buttomBarrier.refresh();
+		bottomBarrier.refresh();
 		refresh();
 
 		for (int i = 0; i < offset.length; i++) {
@@ -80,18 +92,18 @@ public class BarrierOperation {
 
 		topBarrier.transparency(offset, livingSpaceHeight);
 		topBarrier.drawOutLine(offset, livingSpaceHeight);
-		buttomBarrier.transparency(offset);
-		buttomBarrier.drawOutLine(offset);
+		bottomBarrier.transparency(offset);
+		bottomBarrier.drawOutLine(offset);
 
-		topBarrier.setY(-600);
+		topBarrier.setY(-800);
 	}
 
 	public Image getTopBarrierImage() {
 		return topBarrier.getInstantImage();
 	}
 
-	public Image getButtomBarrierImage() {
-		return buttomBarrier.getInstantImage();
+	public Image getBottomBarrierImage() {
+		return bottomBarrier.getInstantImage();
 	}
 
 	public int getTopBarrierY() {
@@ -99,7 +111,7 @@ public class BarrierOperation {
 	}
 
 	public int getBottomBarrierY() {
-		return buttomBarrier.getY();
+		return bottomBarrier.getY();
 	}
 
 	private void refresh() {
@@ -111,8 +123,8 @@ public class BarrierOperation {
 	}
 
 	public void barrierAnimation() {
-		fallingAnimationTimer.start();
-		// fallingAnimationTimer.setDelay(holdDuration);
+		randomBarrier();
+		preparationAnimationTimer.start();
 	}
 
 	// --------------------Barrier class--------------------
@@ -259,12 +271,52 @@ public class BarrierOperation {
 
 	private class FallingAnimationListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			topBarrier.setY(topBarrier.getY() + yVelocity);
+			topBarrier.setY(topBarrier.getY() + fallingVeloctiy);
 			game.repaint();
 			if (topBarrier.getY() == 0) {
 				fallingAnimationTimer.stop();
+				risingAnimationTimer.restart();
 			}
 
 		}
 	}
+	
+	private class RisingAnimationListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+			topBarrier.setY(topBarrier.getY() - risingVelocity);
+			game.repaint();
+			if(topBarrier.getY() == -800)
+			{
+				risingAnimationTimer.stop();
+				randomBarrier();
+				preparationAnimationTimer.restart();
+			}
+		}
+	}
+	
+	private class PreparationAnimationListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+			topBarrier.setY(topBarrier.getY() + preparationVelocity);
+			game.repaint();
+			if(topBarrier.getY() == -300)
+			{
+				preparationAnimationTimer.stop();
+				holdDurationTimer.restart();
+			}
+		}
+	}
+	
+	private class HoldDurationListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+			holdDurationTimer.stop();
+			fallingAnimationTimer.restart();
+		}
+	}
+	
 }
