@@ -1,13 +1,13 @@
 package mrSpace;
 
+import java.util.Random;
+
 public class Test {
 	public static void main(String[] args) {
-		int n = 0, m = 3;
-		boolean a = (n > m);
-		boolean b = (n <= m);
-		if (a != b) {
+		Random random = new Random();
+		while (true) {
+			System.out.println(random.nextInt(0, 2));
 
 		}
-		System.out.println(a != b);
 	}
 }

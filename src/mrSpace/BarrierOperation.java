@@ -1,5 +1,6 @@
 package mrSpace;
 
+import java.util.Random;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -12,71 +13,177 @@ public class BarrierOperation {
 
 	final public static int TOP = 1;
 	final public static int BOTTOM = 0;
-	private Barrier upperBarrier = null;
+	private static Random random = new Random();
+	private Barrier topBarrier = null;
+	private Barrier buttomBarrier;
+
 	private int[] offset;
-	// private Barrier lowerBarrier;
+	private boolean[] livingSpace;
+	private int[] livingSpaceHeight;
+
+	final private float ONE_LIVING_SPACE_PROBABILITY = 2.0f;
+	final private float TWO_LIVING_SPACE_PROBABILITY = 3.0f;
+	final private float THREE_LIVING_SPACE_PROBABILITY = 1.0f;
+	final private float LIVING_SPACE_PROBABILITY_SUM = ONE_LIVING_SPACE_PROBABILITY +
+			TWO_LIVING_SPACE_PROBABILITY +
+			THREE_LIVING_SPACE_PROBABILITY;
 
 	BarrierOperation() {
-		upperBarrier = new Barrier();
-		offset = new int[] { 0, -100, 0, 0, -100, 0, 0, -100, 0, 0, 0, 0 };
-		upperBarrier.transparency(TOP, offset);
+		topBarrier = new Barrier();
+		buttomBarrier = new Barrier();
+		offset = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		livingSpace = new boolean[] { false, false, false, false, false,
+				false, false, false, false, false, false, false };
+		livingSpaceHeight = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	}
 
-	public Image getter() {
-		return upperBarrier.getInstantImage();
+	public void randomBarrier() {
+		topBarrier.refresh();
+		buttomBarrier.refresh();
+		refresh();
+
+		for (int i = 0; i < offset.length; i++) {
+			offset[i] = random.nextInt(-50, 50);
+		}
+
+		float livingSpaceRandomNum = random.nextFloat(LIVING_SPACE_PROBABILITY_SUM);
+		int livingSpaceAmount = 0;
+		if (livingSpaceRandomNum < ONE_LIVING_SPACE_PROBABILITY) {
+			livingSpaceAmount = 1;
+		} else if (livingSpaceRandomNum < TWO_LIVING_SPACE_PROBABILITY + ONE_LIVING_SPACE_PROBABILITY) {
+			livingSpaceAmount = 2;
+		} else {
+			livingSpaceAmount = 3;
+		}
+
+		for (int i = 0; i < livingSpaceAmount; i++) {
+			int livingSpacePosition = random.nextInt(0, 12);
+			// ----------continue if it has been summonned----------
+			if (livingSpace[livingSpacePosition]) {
+				i--;
+				continue;
+			}
+			livingSpace[livingSpacePosition] = true;
+			livingSpaceHeight[livingSpacePosition] = random.nextInt(30, 50);
+		}
+
+		topBarrier.transparency(offset, livingSpaceHeight);
+		topBarrier.drawOutLine(offset, livingSpaceHeight);
+		buttomBarrier.transparency(offset);
+		buttomBarrier.drawOutLine(offset);
+	}
+
+	public Image getTopBarrierImage() {
+		return topBarrier.getInstantImage();
+	}
+
+	public Image getButtomBarrierImage() {
+		return buttomBarrier.getInstantImage();
+	}
+
+	private void refresh() {
+		for (int i = 0; i < Barrier.TRAP_AMOUNT; i++) {
+			offset[i] = 0;
+			livingSpace[i] = false;
+			livingSpaceHeight[i] = 0;
+		}
 	}
 
 	// --------------------Barrier class--------------------
 
 	private class Barrier {
-		final private static BufferedImage ORIGIN_BUFFEREDIMAGE = Tool
-				.toBufferedImage(new ImageIcon("src/background.png").getImage());
-		private BufferedImage instantBufferedImage = null;
+		final private static Image ORIGIN_IMAGE = new ImageIcon("src/background.png").getImage();
+		private BufferedImage instantBufferedImage = Tool.toBufferedImage(ORIGIN_IMAGE);
 		private Image instantImage = null;
 
-		final public static int BARRIER_WIDTH = ORIGIN_BUFFEREDIMAGE.getWidth();
-		final public static int BARRIER_HEIGHT = ORIGIN_BUFFEREDIMAGE.getHeight();
+		final public static int BARRIER_WIDTH = ORIGIN_IMAGE.getWidth(null);
+		final public static int BARRIER_HEIGHT = ORIGIN_IMAGE.getHeight(null);
 
 		final public static int TRAP_AMOUNT = 12;
 		final public static int BASE_LINE = BARRIER_HEIGHT / 2;
 		public static int TRAP_WIDTH = BARRIER_WIDTH / TRAP_AMOUNT;
 
-		private int[] offset;
-
 		Barrier() {
-			instantBufferedImage = ORIGIN_BUFFEREDIMAGE;
+			instantBufferedImage = Tool.toBufferedImage(ORIGIN_IMAGE);
 		}
 
 		private void refresh() {
-			instantBufferedImage = ORIGIN_BUFFEREDIMAGE;
+			instantBufferedImage = Tool.toBufferedImage(ORIGIN_IMAGE);
 		}
 
 		private int searchYOffset(int x) {
 			return x * TRAP_AMOUNT / BARRIER_WIDTH;
 		}
 
-		private void transparency(int isTop, int[] offset) {
-
+		private void transparency(int[] offset, int[] livingSpaceHeight) {
 			for (int x = 0; x < BARRIER_WIDTH; x++) {
-				for (int y = BASE_LINE
-						+ offset[searchYOffset(x)]; !(y == isTop * (BARRIER_HEIGHT)); y++) {
+				for (int y = BASE_LINE + offset[searchYOffset(x)]
+						- livingSpaceHeight[searchYOffset(x)] + 1; y < BARRIER_HEIGHT; y++) {
 					int rgb = instantBufferedImage.getRGB(x, y);
 					rgb = 0x00fffff & rgb;
 					instantBufferedImage.setRGB(x, y, rgb);
 				}
 			}
-			drawOutLine(isTop, offset);
+
 			instantImage = instantBufferedImage;
 		}
 
-		private void drawOutLine(int isTop, int[] offset) {
-			int OUTER_STROKE = 20;
+		private void transparency(int[] offset) {
+			for (int x = 0; x < BARRIER_WIDTH; x++) {
+				for (int y = BASE_LINE
+						+ offset[searchYOffset(x)]; y >= 0; y--) {
+					int rgb = instantBufferedImage.getRGB(x, y);
+					rgb = 0x00fffff & rgb;
+					instantBufferedImage.setRGB(x, y, rgb);
+				}
+			}
+
+			instantImage = instantBufferedImage;
+		}
+
+		private void drawOutLine(int[] offset, int[] livingSpaceHeight) {
+			int OUTER_STROKE = 5;
+			// int INNER_STROKE = 4;
+			int X_OFFSET = OUTER_STROKE / 2;
+			int Y_OFFSET = OUTER_STROKE / 2 * -1;
+
+			Graphics2D g2D = (Graphics2D) instantBufferedImage.getGraphics();
+			g2D.setColor(new Color(0xff403416));
+			g2D.setStroke(new BasicStroke(OUTER_STROKE));
+
+			// ----------draw horizontal outerline----------
+			for (int i = 0; i < TRAP_AMOUNT; i++) {
+				int x1 = i * TRAP_WIDTH + X_OFFSET;
+				int y1 = BASE_LINE + Y_OFFSET + offset[i] - livingSpaceHeight[i] + 1;
+				int x2 = (i + 1) * TRAP_WIDTH - X_OFFSET;
+				int y2 = y1;
+
+				g2D.drawLine(x1, y1, x2, y2);
+			}
+
+			// ----------draw vertical outerline----------
+			for (int i = 1; i < TRAP_AMOUNT; i++) {
+				int tmpXOffset = X_OFFSET;
+				int tmpYOffset = Y_OFFSET;
+				boolean isYGoingUp = offset[i - 1] - livingSpaceHeight[i - 1] > offset[i] - livingSpaceHeight[i];
+				if (isYGoingUp) {
+					tmpXOffset = X_OFFSET * -1;
+				}
+
+				int x1 = i * TRAP_WIDTH + tmpXOffset;
+				int y1 = BASE_LINE + tmpYOffset - livingSpaceHeight[i - 1] + offset[i - 1] + 1;
+				int x2 = x1;
+				int y2 = BASE_LINE + tmpYOffset - livingSpaceHeight[i] + offset[i] + 1;
+
+				g2D.drawLine(x1, y1, x2, y2);
+			}
+		}
+
+		private void drawOutLine(int[] offset) {
+			int OUTER_STROKE = 5;
 			// int INNER_STROKE = 4;
 			int X_OFFSET = OUTER_STROKE / 2;
 			int Y_OFFSET = OUTER_STROKE / 2;
-			if (isTop == 1) {
-				Y_OFFSET = Y_OFFSET * -1;
-			}
 
 			Graphics2D g2D = (Graphics2D) instantBufferedImage.getGraphics();
 			g2D.setColor(new Color(0xff403416));
@@ -95,7 +202,7 @@ public class BarrierOperation {
 			for (int i = 1; i < TRAP_AMOUNT; i++) {
 				int tmpXOffset = X_OFFSET;
 				boolean isYGoingUp = offset[i - 1] > offset[i];
-				if (isYGoingUp == (isTop == 1)) {
+				if (!isYGoingUp) {
 					tmpXOffset = X_OFFSET * -1;
 				}
 
@@ -104,8 +211,6 @@ public class BarrierOperation {
 				int x2 = x1;
 				int y2 = BASE_LINE + Y_OFFSET + offset[i];
 
-				System.out.println(x1 + ", " + y1 + ", " + x2 + ", " + y2);
-
 				g2D.drawLine(x1, y1, x2, y2);
 			}
 		}
@@ -113,5 +218,6 @@ public class BarrierOperation {
 		public Image getInstantImage() {
 			return instantImage;
 		}
+
 	}
 }
