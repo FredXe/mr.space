@@ -70,7 +70,7 @@ public class BarrierOperation {
 		}
 
 		private void drawOutLine(int isTop, int[] offset) {
-			int OUTER_STROKE = 5;
+			int OUTER_STROKE = 20;
 			// int INNER_STROKE = 4;
 			int X_OFFSET = OUTER_STROKE / 2;
 			int Y_OFFSET = OUTER_STROKE / 2;
@@ -84,7 +84,7 @@ public class BarrierOperation {
 			// ----------draw horizontal outerline----------
 			for (int i = 0; i < TRAP_AMOUNT; i++) {
 				int x1 = i * TRAP_WIDTH + X_OFFSET;
-				int y1 = BASE_LINE + offset[searchYOffset(x1)] + Y_OFFSET;
+				int y1 = BASE_LINE + offset[i] + Y_OFFSET;
 				int x2 = (i + 1) * TRAP_WIDTH - X_OFFSET;
 				int y2 = y1;
 
@@ -94,16 +94,15 @@ public class BarrierOperation {
 			// ----------draw vertical outerline----------
 			for (int i = 1; i < TRAP_AMOUNT; i++) {
 				int tmpXOffset = X_OFFSET;
-				boolean isYGoingUp = offset[searchYOffset((i - 1) * TRAP_WIDTH)] > offset[searchYOffset(
-						i * TRAP_WIDTH)];
+				boolean isYGoingUp = offset[i - 1] > offset[i];
 				if (isYGoingUp == (isTop == 1)) {
 					tmpXOffset = X_OFFSET * -1;
 				}
 
 				int x1 = i * TRAP_WIDTH + tmpXOffset;
-				int y1 = BASE_LINE + Y_OFFSET + offset[searchYOffset((i - 1) * TRAP_WIDTH)];
+				int y1 = BASE_LINE + Y_OFFSET + offset[i - 1];
 				int x2 = x1;
-				int y2 = BASE_LINE + Y_OFFSET + offset[searchYOffset(i * TRAP_WIDTH)];
+				int y2 = BASE_LINE + Y_OFFSET + offset[i];
 
 				System.out.println(x1 + ", " + y1 + ", " + x2 + ", " + y2);
 
