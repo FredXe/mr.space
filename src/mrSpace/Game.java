@@ -20,12 +20,15 @@ class Game extends JInternalFrame {
 	Image background = new ImageIcon("src/background_color.png").getImage();
 
 	BarrierActionListener barrierActionListener = new BarrierActionListener();
-	Timer summonBarrier = new Timer(1000, barrierActionListener);
-
+	Timer summonBarrier = new Timer(2000, barrierActionListener);
+	
 	KeyListenerTest keyListenerTest = new KeyListenerTest();
 
 	Game() {
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6281876c140219974902a689fbb44713d06b9eca
 		summonBarrier.start();
 		this.addKeyListener(keyListenerTest);
 		this.setTitle("Mr.Space");
@@ -38,8 +41,11 @@ class Game extends JInternalFrame {
 	public void paint(Graphics g) {
 		Graphics2D g2D = (Graphics2D) g;
 		g2D.drawImage(background, 0, 0, null);
+<<<<<<< HEAD
 		// g2D.setColor(Color.yellow);
 		// g2D.fillRect(0, 0, 600, 800);
+=======
+>>>>>>> 6281876c140219974902a689fbb44713d06b9eca
 		g2D.drawImage(br.getTopBarrierImage(), 0, br.getTopBarrierY(), null);
 		g2D.drawImage(br.getButtomBarrierImage(), 0, br.getBottomBarrierY(), null);
 		update(getGraphics());
@@ -53,6 +59,7 @@ class Game extends JInternalFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			br.randomBarrier();
+			br.barrierAnimation();
 			repaint();
 		}
 	}
