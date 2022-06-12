@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.ImageIcon;
 
 import java.awt.Image;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -14,7 +15,7 @@ import java.awt.event.KeyListener;
 
 class Game extends JFrame {
 
-	BarrierOperation br = new BarrierOperation();
+	BarrierOperation br = new BarrierOperation(this);
 	Image background = new ImageIcon("src/background_color.png").getImage();
 
 	BarrierActionListener barrierActionListener = new BarrierActionListener();
@@ -35,9 +36,18 @@ class Game extends JFrame {
 	public void paint(Graphics g) {
 		Graphics2D g2D = (Graphics2D) g;
 		g2D.drawImage(background, 0, 0, null);
-		g2D.drawImage(br.getTopBarrierImage(), 0, 0, null);
-		g2D.drawImage(br.getButtomBarrierImage(), 0, 0, null);
+//		g2D.setColor(Color.yellow);
+//		g2D.fillRect(0, 0, 600, 800);
+		g2D.drawImage(br.getTopBarrierImage(), 0, br.getTopBarrierY(), null);
+		g2D.drawImage(br.getButtomBarrierImage(), 0, br.getBottomBarrierY(), null);
+		update(getGraphics());
 	}
+	
+	public void update(Graphics g)
+	{
+		
+	}
+	
 
 	private class BarrierActionListener implements ActionListener {
 		@Override
@@ -52,7 +62,9 @@ class Game extends JFrame {
 		public void keyPressed(KeyEvent e) {
 			// TODO Auto-generated method stub
 			if (e.getKeyChar() == ' ') {
+				
 				br.randomBarrier();
+				br.barrierAnimation();
 				repaint();
 			}
 		}
