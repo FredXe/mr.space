@@ -13,9 +13,9 @@ import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
 public class BarrierOperation {
-	
+
 	private Game game = null;
-	
+
 	final public static int TOP = 1;
 	final public static int BOTTOM = 0;
 	private static Random random = new Random();
@@ -25,16 +25,16 @@ public class BarrierOperation {
 	private int[] offset;
 	private boolean[] livingSpace;
 	private int[] livingSpaceHeight;
-	
+
 	final private float ONE_LIVING_SPACE_PROBABILITY = 2.0f;
 	final private float TWO_LIVING_SPACE_PROBABILITY = 3.0f;
 	final private float THREE_LIVING_SPACE_PROBABILITY = 1.0f;
 	final private float LIVING_SPACE_PROBABILITY_SUM = ONE_LIVING_SPACE_PROBABILITY +
 			TWO_LIVING_SPACE_PROBABILITY +
 			THREE_LIVING_SPACE_PROBABILITY;
-	
+
 	private BarrierAnimationListener barrierAnimationListener = new BarrierAnimationListener();
-	private Timer animationTimer = new Timer(5 , barrierAnimationListener);
+	private Timer animationTimer = new Timer(5, barrierAnimationListener);
 	private int yVelocity = 50;
 
 	BarrierOperation(Game gameinput) {
@@ -81,10 +81,10 @@ public class BarrierOperation {
 		topBarrier.drawOutLine(offset, livingSpaceHeight);
 		buttomBarrier.transparency(offset);
 		buttomBarrier.drawOutLine(offset);
-		
+
 		topBarrier.setY(-600);
 	}
-	
+
 	public Image getTopBarrierImage() {
 		return topBarrier.getInstantImage();
 	}
@@ -92,16 +92,15 @@ public class BarrierOperation {
 	public Image getButtomBarrierImage() {
 		return buttomBarrier.getInstantImage();
 	}
-	
-	public int getTopBarrierY()
-	{
+
+	public int getTopBarrierY() {
 		return topBarrier.getY();
 	}
-	public int getBottomBarrierY()
-	{
+
+	public int getBottomBarrierY() {
 		return buttomBarrier.getY();
 	}
-	
+
 	private void refresh() {
 		for (int i = 0; i < Barrier.TRAP_AMOUNT; i++) {
 			offset[i] = 0;
@@ -109,9 +108,8 @@ public class BarrierOperation {
 			livingSpaceHeight[i] = 0;
 		}
 	}
-	
-	public void barrierAnimation()
-	{
+
+	public void barrierAnimation() {
 		animationTimer.start();
 	}
 
@@ -128,7 +126,7 @@ public class BarrierOperation {
 		final public static int TRAP_AMOUNT = 12;
 		final public static int BASE_LINE = 3 * BARRIER_HEIGHT / 4;
 		public static int TRAP_WIDTH = BARRIER_WIDTH / TRAP_AMOUNT;
-		
+
 		private int y = 0;
 
 		Barrier() {
@@ -243,32 +241,28 @@ public class BarrierOperation {
 			}
 		}
 
-		public void  setY(int inputY)
-		{
+		public void setY(int inputY) {
 			y = inputY;
 		}
-		public int getY()
-		{
+
+		public int getY() {
 			return y;
 		}
+
 		public Image getInstantImage() {
 			return instantImage;
 		}
 
 	}
-	
-	private class BarrierAnimationListener implements ActionListener
-	{
-		public void actionPerformed(ActionEvent e)
-		{	
+
+	private class BarrierAnimationListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
 			topBarrier.setY(topBarrier.getY() + yVelocity);
 			game.repaint();
-			if(topBarrier.getY() == 0)
-			{
+			if (topBarrier.getY() == 0) {
 				animationTimer.stop();
 			}
-			
+
 		}
 	}
 }
-
