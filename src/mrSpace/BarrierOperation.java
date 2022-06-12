@@ -84,7 +84,7 @@ public class BarrierOperation {
 			// ----------draw horizontal outerline----------
 			for (int i = 0; i < TRAP_AMOUNT; i++) {
 				int x1 = i * TRAP_WIDTH + X_OFFSET;
-				int y1 = BASE_LINE + offset[i] + Y_OFFSET;
+				int y1 = BASE_LINE + Y_OFFSET + offset[i];
 				int x2 = (i + 1) * TRAP_WIDTH - X_OFFSET;
 				int y2 = y1;
 
