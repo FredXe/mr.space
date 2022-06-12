@@ -70,8 +70,8 @@ public class BarrierOperation {
 		}
 
 		private void drawOutLine(int isTop, int[] offset) {
-			int OUTER_STROKE = 8;
-			int INNER_STROKE = 4;
+			int OUTER_STROKE = 5;
+			// int INNER_STROKE = 4;
 			int X_OFFSET = OUTER_STROKE / 2;
 			int Y_OFFSET = OUTER_STROKE / 2;
 			if (isTop == 1) {
@@ -79,7 +79,7 @@ public class BarrierOperation {
 			}
 
 			Graphics2D g2D = (Graphics2D) instantBufferedImage.getGraphics();
-			g2D.setColor(Color.BLACK);
+			g2D.setColor(new Color(0xff403416));
 			g2D.setStroke(new BasicStroke(OUTER_STROKE));
 			// ----------draw horizontal outerline----------
 			for (int i = 0; i < TRAP_AMOUNT; i++) {
@@ -91,19 +91,7 @@ public class BarrierOperation {
 				g2D.drawLine(x1, y1, x2, y2);
 			}
 
-			g2D.setColor(Color.CYAN);
-			g2D.setStroke(new BasicStroke(INNER_STROKE));
-			for (int i = 0; i < TRAP_AMOUNT; i++) {
-				int x1 = i * TRAP_WIDTH + X_OFFSET;
-				int y1 = BASE_LINE + offset[searchYOffset(x1)] + Y_OFFSET;
-				int x2 = (i + 1) * TRAP_WIDTH - X_OFFSET;
-				int y2 = y1;
-
-				g2D.drawLine(x1, y1, x2, y2);
-			}
-
-			g2D.setColor(Color.BLACK);
-			g2D.setStroke(new BasicStroke(OUTER_STROKE));
+			// ----------draw vertical outerline----------
 			for (int i = 1; i < TRAP_AMOUNT; i++) {
 				int tmpXOffset = X_OFFSET;
 				boolean isYGoingUp = offset[searchYOffset((i - 1) * TRAP_WIDTH)] > offset[searchYOffset(
