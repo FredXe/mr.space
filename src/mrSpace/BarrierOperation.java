@@ -33,8 +33,9 @@ public class BarrierOperation {
 			TWO_LIVING_SPACE_PROBABILITY +
 			THREE_LIVING_SPACE_PROBABILITY;
 	
-	private BarrierAnimationListener barrierAnimationListener = new BarrierAnimationListener();
-	private Timer animationTimer = new Timer(5 , barrierAnimationListener);
+	private FallingAnimationListener fallingAnimationListener = new FallingAnimationListener();
+	private Timer fallingAnimationTimer = new Timer(5 , fallingAnimationListener);
+	private int holdDuration = 1000;
 	private int yVelocity = 50;
 
 	BarrierOperation(Game gameinput) {
@@ -112,7 +113,8 @@ public class BarrierOperation {
 	
 	public void barrierAnimation()
 	{
-		animationTimer.start();
+		fallingAnimationTimer.start();
+//		fallingAnimationTimer.setDelay(holdDuration);
 	}
 
 	// --------------------Barrier class--------------------
@@ -257,7 +259,7 @@ public class BarrierOperation {
 
 	}
 	
-	private class BarrierAnimationListener implements ActionListener
+	private class FallingAnimationListener implements ActionListener
 	{
 		public void actionPerformed(ActionEvent e)
 		{	
@@ -265,7 +267,7 @@ public class BarrierOperation {
 			game.repaint();
 			if(topBarrier.getY() == 0)
 			{
-				animationTimer.stop();
+				fallingAnimationTimer.stop();
 			}
 			
 		}

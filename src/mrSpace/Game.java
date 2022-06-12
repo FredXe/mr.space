@@ -2,6 +2,7 @@ package mrSpace;
 
 import javax.swing.Timer;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.ImageIcon;
 
 import java.awt.Image;
@@ -13,18 +14,18 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-class Game extends JFrame {
+class Game extends JInternalFrame {
 
 	BarrierOperation br = new BarrierOperation(this);
 	Image background = new ImageIcon("src/background_color.png").getImage();
 
 	BarrierActionListener barrierActionListener = new BarrierActionListener();
-	Timer summonBarrier = new Timer(1000, barrierActionListener);
-
+	Timer summonBarrier = new Timer(2000, barrierActionListener);
+	
 	KeyListenerTest keyListenerTest = new KeyListenerTest();
 
 	Game() {
-		// summonBarrier.start();
+		summonBarrier.start();
 		this.addKeyListener(keyListenerTest);
 		this.setTitle("Mr.Space");
 		this.setSize(600, 800);
@@ -36,8 +37,6 @@ class Game extends JFrame {
 	public void paint(Graphics g) {
 		Graphics2D g2D = (Graphics2D) g;
 		g2D.drawImage(background, 0, 0, null);
-//		g2D.setColor(Color.yellow);
-//		g2D.fillRect(0, 0, 600, 800);
 		g2D.drawImage(br.getTopBarrierImage(), 0, br.getTopBarrierY(), null);
 		g2D.drawImage(br.getButtomBarrierImage(), 0, br.getBottomBarrierY(), null);
 		update(getGraphics());
@@ -53,6 +52,7 @@ class Game extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			br.randomBarrier();
+			br.barrierAnimation();
 			repaint();
 		}
 	}
