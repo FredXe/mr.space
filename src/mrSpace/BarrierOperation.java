@@ -32,16 +32,10 @@ public class BarrierOperation {
 	final private float LIVING_SPACE_PROBABILITY_SUM = ONE_LIVING_SPACE_PROBABILITY +
 			TWO_LIVING_SPACE_PROBABILITY +
 			THREE_LIVING_SPACE_PROBABILITY;
-<<<<<<< HEAD
 
-	private BarrierAnimationListener barrierAnimationListener = new BarrierAnimationListener();
-	private Timer animationTimer = new Timer(5, barrierAnimationListener);
-=======
-	
 	private FallingAnimationListener fallingAnimationListener = new FallingAnimationListener();
-	private Timer fallingAnimationTimer = new Timer(5 , fallingAnimationListener);
+	private Timer fallingAnimationTimer = new Timer(5, fallingAnimationListener);
 	private int holdDuration = 1000;
->>>>>>> 6281876c140219974902a689fbb44713d06b9eca
 	private int yVelocity = 50;
 
 	BarrierOperation(Game gameinput) {
@@ -115,17 +109,10 @@ public class BarrierOperation {
 			livingSpaceHeight[i] = 0;
 		}
 	}
-<<<<<<< HEAD
 
 	public void barrierAnimation() {
-		animationTimer.start();
-=======
-	
-	public void barrierAnimation()
-	{
 		fallingAnimationTimer.start();
-//		fallingAnimationTimer.setDelay(holdDuration);
->>>>>>> 6281876c140219974902a689fbb44713d06b9eca
+		// fallingAnimationTimer.setDelay(holdDuration);
 	}
 
 	// --------------------Barrier class--------------------
@@ -269,26 +256,13 @@ public class BarrierOperation {
 		}
 
 	}
-<<<<<<< HEAD
 
-	private class BarrierAnimationListener implements ActionListener {
+	private class FallingAnimationListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			topBarrier.setY(topBarrier.getY() + yVelocity);
 			game.repaint();
 			if (topBarrier.getY() == 0) {
-				animationTimer.stop();
-=======
-	
-	private class FallingAnimationListener implements ActionListener
-	{
-		public void actionPerformed(ActionEvent e)
-		{	
-			topBarrier.setY(topBarrier.getY() + yVelocity);
-			game.repaint();
-			if(topBarrier.getY() == 0)
-			{
 				fallingAnimationTimer.stop();
->>>>>>> 6281876c140219974902a689fbb44713d06b9eca
 			}
 
 		}
