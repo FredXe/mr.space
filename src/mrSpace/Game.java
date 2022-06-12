@@ -8,6 +8,7 @@ class Game extends JFrame{
 	
 	BarrierOperation br = new BarrierOperation();
 	Image background = new ImageIcon("src/backcolor.png").getImage();
+	
 	Game()
 	{
 		this.setTitle("Mr.Space");
