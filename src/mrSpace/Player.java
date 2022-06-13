@@ -151,7 +151,7 @@ public class Player {
 			System.out.print(position + " " + movable);
 			// System.out.println(e.getKeyCode());
 			if (movable) {
-				movable = false;
+				// movable = false;
 				if ((e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) && position > 0
 						&& !playerVerticalAnimationTimer.isRunning()
 						&& !leftAnimationTimer.isRunning()) {
@@ -203,7 +203,7 @@ public class Player {
 				displacement = 0;
 				currentPose = poseBufferedImage[Player.STAND];
 				position--;
-				movable = true;
+				// movable = true;
 			}
 			game.repaint();
 		}
@@ -231,7 +231,7 @@ public class Player {
 				displacement = 0;
 				currentPose = poseBufferedImage[Player.STAND];
 				position++;
-				movable = true;
+				// movable = true;
 			}
 			game.repaint();
 		}
