@@ -1,7 +1,6 @@
 package mrSpace;
 
 import javax.swing.Timer;
-import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.ImageIcon;
 
@@ -22,12 +21,13 @@ class Game extends JInternalFrame {
 	BarrierActionListener barrierActionListener = new BarrierActionListener();
 	Timer kickStartTimer = new Timer(2000, barrierActionListener);
 
+	Player player = new Player(this);
+
 	KeyListenerTest keyListenerTest = new KeyListenerTest();
 
 	Game() {
-		kickStartTimer.start();
+		// kickStartTimer.start();
 		this.addKeyListener(keyListenerTest);
-		this.setTitle("Mr.Space");
 		this.setSize(600, 800);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
@@ -37,6 +37,7 @@ class Game extends JInternalFrame {
 	public void paint(Graphics g) {
 		Graphics2D g2D = (Graphics2D) g;
 		g2D.drawImage(background, 0, 0, null);
+		g2D.drawImage(player.getCurrentPose(), player.getCoordinate().x, player.getCoordinate().y, null);
 		g2D.drawImage(br.getTopBarrierImage(), 0, br.getTopBarrierY(), null);
 		g2D.drawImage(br.getBottomBarrierImage(), 0, br.getBottomBarrierY(), null);
 		update(getGraphics());
@@ -49,23 +50,23 @@ class Game extends JInternalFrame {
 	private class BarrierActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
+
 			br.barrierAnimation();
 			kickStartTimer.stop();
-//			repaint();
+			// repaint();
 		}
 	}
 
 	private class KeyListenerTest implements KeyListener {
 		@Override
 		public void keyPressed(KeyEvent e) {
-			// TODO Auto-generated method stub
-			if (e.getKeyChar() == ' ') {
+			// System.out.println(":D");
+			// if (e.getKeyChar() == ' ') {
 
-				br.randomBarrier();
-				br.barrierAnimation();
-				repaint();
-			}
+			// br.randomBarrier();
+			// br.barrierAnimation();
+			// repaint();
+			// }
 		}
 
 		@Override

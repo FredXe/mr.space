@@ -40,16 +40,15 @@ public class BarrierOperation {
 	private RisingAnimationListener risingAnimationListener = new RisingAnimationListener();
 	private Timer risingAnimationTimer = new Timer(5, risingAnimationListener);
 	private int risingVelocity = 50;
-	
+
 	private PreparationAnimationListener preparationAnimationListener = new PreparationAnimationListener();
 	private Timer preparationAnimationTimer = new Timer(5, preparationAnimationListener);
 	private int preparationVelocity = 50;
-	
+
 	private HoldDurationListener holdDurationListener = new HoldDurationListener();
 	private int holdDuration = 1000;
-	private Timer holdDurationTimer = new Timer(holdDuration,holdDurationListener); 
-	
-	
+	private Timer holdDurationTimer = new Timer(holdDuration, holdDurationListener);
+
 	BarrierOperation(Game gameinput) {
 		topBarrier = new Barrier();
 		bottomBarrier = new Barrier();
@@ -280,43 +279,35 @@ public class BarrierOperation {
 
 		}
 	}
-	
-	private class RisingAnimationListener implements ActionListener
-	{
-		public void actionPerformed(ActionEvent e)
-		{
+
+	private class RisingAnimationListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
 			topBarrier.setY(topBarrier.getY() - risingVelocity);
 			game.repaint();
-			if(topBarrier.getY() == -800)
-			{
+			if (topBarrier.getY() == -800) {
 				risingAnimationTimer.stop();
 				randomBarrier();
 				preparationAnimationTimer.restart();
 			}
 		}
 	}
-	
-	private class PreparationAnimationListener implements ActionListener
-	{
-		public void actionPerformed(ActionEvent e)
-		{
+
+	private class PreparationAnimationListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
 			topBarrier.setY(topBarrier.getY() + preparationVelocity);
-			game.repaint();
-			if(topBarrier.getY() == -300)
-			{
+			// game.repaint();
+			if (topBarrier.getY() == -300) {
 				preparationAnimationTimer.stop();
 				holdDurationTimer.restart();
 			}
 		}
 	}
-	
-	private class HoldDurationListener implements ActionListener
-	{
-		public void actionPerformed(ActionEvent e)
-		{
+
+	private class HoldDurationListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
 			holdDurationTimer.stop();
 			fallingAnimationTimer.restart();
 		}
 	}
-	
+
 }
