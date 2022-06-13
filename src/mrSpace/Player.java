@@ -8,9 +8,11 @@ import java.awt.event.KeyListener;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.file.FileStore;
 
 import javax.swing.Timer;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.AbstractAction;
 import javax.swing.JInternalFrame;
 
@@ -32,13 +34,17 @@ public class Player {
 	public static final int JUMP_RIGHT_LAND = 14;
 	public static final int POSE_AMOUNT = 15;
 
+	public static final int PLAYER_IMAGE_HEIGHT = 60;
+
 	private Game game;
+	private BarrierOperation br;
 
 	private BufferedImage[] poseBufferedImage;
 
 	private Image currentPose;
 	private Point coordinate;
 	private int position;
+	private boolean movable = false;
 
 	private static final int MOVING_SPEED = 10;
 	private static final int MOVING_TIME = 8;
@@ -50,10 +56,21 @@ public class Player {
 	private RightAnimationListener rightAnimationListener = new RightAnimationListener();
 	private Timer rightAnimationTimer = new Timer(MOVING_TIME, rightAnimationListener);
 
-	Player(Game gameInput) {
+	private RisingAnimationListener risingAnimationListener = new RisingAnimationListener();
+	private Timer risingAnimationTimer = new Timer(30, risingAnimationListener);
+
+	private InitialAnimationListener initialAnimationListener = new InitialAnimationListener();
+	private Timer initialAnimationTimer = new Timer(30, initialAnimationListener);
+
+	private FallingAnimationListener fallingAnimationListener = new FallingAnimationListener();
+	private Timer fallingAnimationTimer = new Timer(30, fallingAnimationListener);
+
+	Player(Game gameInput, BarrierOperation brInput) {
 		poseBufferedImage = new BufferedImage[Player.POSE_AMOUNT];
 
 		try {
+			// poseBufferedImage[Player.STAND] = ImageIO.read(new
+			// File("src/playerImage/stickman.png"));
 			poseBufferedImage[Player.STAND] = ImageIO.read(new File("src/playerImage/stand.png"));
 			poseBufferedImage[Player.LEFT] = ImageIO.read(new File("src/playerImage/left.png"));
 			poseBufferedImage[Player.RIGHT] = ImageIO.read(new File("src/playerImage/right.png"));
@@ -74,12 +91,18 @@ public class Player {
 			// TODO: handle exception
 		}
 
+		// poseBufferedImage[Player.STAND] = Tool.scale(poseBufferedImage[Player.STAND],
+		// 120, 120, 2, 2);
+
 		game = gameInput;
 		game.addKeyListener(movingKeyListener);
 		game.setFocusable(true);
 
+		br = brInput;
+		br.setPlayer(this);
+
 		currentPose = poseBufferedImage[Player.STAND];
-		coordinate = new Point(500, 300);
+		coordinate = new Point(500, 450);
 		position = coordinate.x / 50;
 
 		// pose = new BufferedImage[1];
@@ -95,19 +118,45 @@ public class Player {
 		return coordinate;
 	}
 
+	public Timer getRisingAnimationTimer() {
+		return risingAnimationTimer;
+	}
+
+	public Timer getFallingAnimationTimer() {
+		return fallingAnimationTimer;
+	}
+
+	public Timer getInitialAnimationTimer() {
+		return initialAnimationTimer;
+	}
+
+	public int getPosition() {
+		return position;
+	}
+
+	public void setPosition(int input) {
+		position = input;
+	}
+
+	public void setRisingAnimaListener(boolean input) {
+		risingAnimationListener.setFirstTime(input);
+	}
+
 	private class MovingKeyListener implements KeyListener {
 		@Override
 		public void keyPressed(KeyEvent e) {
-			System.out.print(e.getKeyChar());
+			System.out.print(position + " ");
 			// System.out.println(e.getKeyCode());
-			if (e.getKeyCode() == KeyEvent.VK_A && position > 0 && !leftAnimationTimer.isRunning()) {
-				position--;
-				leftAnimationTimer.restart();
-				currentPose = poseBufferedImage[Player.LEFT];
-			} else if (e.getKeyCode() == KeyEvent.VK_D && position < 11 && !rightAnimationTimer.isRunning()) {
-				position++;
-				rightAnimationTimer.restart();
-				currentPose = poseBufferedImage[Player.RIGHT];
+			if (movable) {
+				if (e.getKeyCode() == KeyEvent.VK_A && position > 0 && !leftAnimationTimer.isRunning()) {
+					position--;
+					leftAnimationTimer.restart();
+					currentPose = poseBufferedImage[Player.LEFT];
+				} else if (e.getKeyCode() == KeyEvent.VK_D && position < 11 && !rightAnimationTimer.isRunning()) {
+					position++;
+					rightAnimationTimer.restart();
+					currentPose = poseBufferedImage[Player.RIGHT];
+				}
 			}
 		}
 
@@ -156,4 +205,94 @@ public class Player {
 			game.repaint();
 		}
 	}
+
+	private class RisingAnimationListener implements ActionListener {
+		private boolean firstTime = false;
+		private static final int DEFAULT_RISING_SPEED = 81;
+		private int risingSpeed = DEFAULT_RISING_SPEED;
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (firstTime) {
+				System.out.println("risingAnimation " + risingSpeed);
+				movable = false;
+				firstTime = false;
+			}
+			coordinate.y = coordinate.y - risingSpeed;
+			risingSpeed = 2 * risingSpeed / 3;
+			game.repaint();
+			if (coordinate.y <= 450) {
+				risingAnimationTimer.stop();
+				risingSpeed = DEFAULT_RISING_SPEED;
+				initialAnimationListener.setFirstTime(true);
+				initialAnimationTimer.restart();
+			}
+		}
+
+		public void setFirstTime(boolean input) {
+			firstTime = input;
+		}
+	}
+
+	private class InitialAnimationListener implements ActionListener {
+		private boolean firstTime = false;
+		private int initialSpeed = 0;
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (firstTime) {
+				System.out.println("InitialAnimation");
+				coordinate.x = position * 50;
+				initialSpeed = (300 - coordinate.x) / 10;
+				firstTime = false;
+			}
+			coordinate.x = coordinate.x + initialSpeed;
+			game.repaint();
+			System.out.println(coordinate.x);
+			if (coordinate.x == 300) {
+				position = 6;
+				System.out.println(":D");
+				initialAnimationTimer.stop();
+				fallingAnimationTimer.restart();
+				fallingAnimationListener.setFirstTime(true);
+			}
+		}
+
+		public boolean getFirstTime() {
+			return firstTime;
+		}
+
+		public void setFirstTime(boolean input) {
+			firstTime = input;
+		}
+	}
+
+	private class FallingAnimationListener implements ActionListener {
+		private boolean firstTime = false;
+		private int fallingSpeed = 0;
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (firstTime) {
+				System.out.println("fallingAnimation " + (br.getOffset()[6] + br.getBaseLine()));
+				fallingSpeed = (br.getOffset()[6] + br.getBaseLine() - coordinate.y) / 6;
+				firstTime = false;
+				coordinate.y = coordinate.y
+						+ ((br.getOffset()[6] + br.getBaseLine() - coordinate.y) - fallingSpeed * 6);
+			}
+			coordinate.y = coordinate.y + fallingSpeed;
+			game.repaint();
+			// System.out.println(coordinate.y);
+			if (coordinate.y >= br.getOffset()[6] + br.getBaseLine()) {
+				System.out.println("fallingAnimation stopped");
+				fallingAnimationTimer.stop();
+				movable = true;
+			}
+		}
+
+		public void setFirstTime(boolean input) {
+			firstTime = input;
+		}
+	}
+
 }

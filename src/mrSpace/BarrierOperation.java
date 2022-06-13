@@ -15,6 +15,7 @@ import javax.swing.Timer;
 public class BarrierOperation {
 
 	private Game game = null;
+	private Player player = null;
 
 	final public static int TOP = 1;
 	final public static int BOTTOM = 0;
@@ -46,7 +47,7 @@ public class BarrierOperation {
 	private int preparationVelocity = 50;
 
 	private HoldDurationListener holdDurationListener = new HoldDurationListener();
-	private int holdDuration = 1000;
+	private int holdDuration = 2500;
 	private Timer holdDurationTimer = new Timer(holdDuration, holdDurationListener);
 
 	BarrierOperation(Game gameinput) {
@@ -113,6 +114,18 @@ public class BarrierOperation {
 		return bottomBarrier.getY();
 	}
 
+	public int[] getOffset() {
+		return offset;
+	}
+
+	public int getBaseLine() {
+		return Barrier.BASE_LINE;
+	}
+
+	public void setPlayer(Player input) {
+		player = input;
+	}
+
 	private void refresh() {
 		for (int i = 0; i < Barrier.TRAP_AMOUNT; i++) {
 			offset[i] = 0;
@@ -124,6 +137,8 @@ public class BarrierOperation {
 	public void barrierAnimation() {
 		randomBarrier();
 		preparationAnimationTimer.start();
+		player.getInitialAnimationTimer().restart();
+		player.setRisingAnimaListener(true);
 	}
 
 	// --------------------Barrier class--------------------
@@ -275,6 +290,8 @@ public class BarrierOperation {
 			if (topBarrier.getY() == 0) {
 				fallingAnimationTimer.stop();
 				risingAnimationTimer.restart();
+				player.getRisingAnimationTimer().restart();
+				player.setRisingAnimaListener(true);
 			}
 
 		}
@@ -295,7 +312,7 @@ public class BarrierOperation {
 	private class PreparationAnimationListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			topBarrier.setY(topBarrier.getY() + preparationVelocity);
-			// game.repaint();
+			game.repaint();
 			if (topBarrier.getY() == -300) {
 				preparationAnimationTimer.stop();
 				holdDurationTimer.restart();
