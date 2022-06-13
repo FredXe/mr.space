@@ -185,14 +185,19 @@ public class Player {
 	}
 
 	private class LeftAnimationListener implements ActionListener {
+		private boolean firstTime = false;
 		private int displacement;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (firstTime) {
+				coordinate.x = position * 50;
+				firstTime = false;
+			}
 
 			coordinate.x = coordinate.x - MOVING_SPEED;
 			displacement = displacement + MOVING_SPEED;
-			if (displacement >= 50) {
+			if (displacement == 50) {
 				leftAnimationTimer.stop();
 				displacement = 0;
 				currentPose = poseBufferedImage[Player.STAND];
@@ -200,22 +205,36 @@ public class Player {
 			}
 			game.repaint();
 		}
+
+		public void setFirstTime(boolean input) {
+			firstTime = input;
+		}
 	}
 
 	private class RightAnimationListener implements ActionListener {
+		private boolean firstTime = false;
 		private int displacement;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (firstTime) {
+				coordinate.x = position * 50;
+				firstTime = false;
+			}
+
 			coordinate.x = coordinate.x + MOVING_SPEED;
 			displacement = displacement + MOVING_SPEED;
-			if (displacement >= 50) {
+			if (displacement == 50) {
 				rightAnimationTimer.stop();
 				displacement = 0;
 				currentPose = poseBufferedImage[Player.STAND];
 				position++;
 			}
 			game.repaint();
+		}
+
+		public void setFirstTime(boolean input) {
+			firstTime = input;
 		}
 	}
 
@@ -244,8 +263,10 @@ public class Player {
 				movingSpeed = 0;
 				playerVerticalAnimationTimer.stop();
 				if (isRight == 1) {
+					rightAnimationListener.setFirstTime(true);
 					rightAnimationTimer.restart();
 				} else {
+					leftAnimationListener.setFirstTime(true);
 					leftAnimationTimer.restart();
 				}
 			}
