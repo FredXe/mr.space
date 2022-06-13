@@ -5,7 +5,6 @@ import javax.swing.JInternalFrame;
 import javax.swing.ImageIcon;
 
 import java.awt.Image;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -21,9 +20,12 @@ class Game extends JInternalFrame {
 	BarrierActionListener barrierActionListener = new BarrierActionListener();
 	Timer kickStartTimer = new Timer(2000, barrierActionListener);
 
-	Player player = new Player(this, br);
+	private Player player = new Player(this, br);
 
 	KeyListenerTest keyListenerTest = new KeyListenerTest();
+
+	private int X_RENDER_OFFSET = -5;
+	private int Y_RENDER_OFFSET = 10;
 
 	Game() {
 		kickStartTimer.start();
@@ -38,8 +40,8 @@ class Game extends JInternalFrame {
 		Graphics2D g2D = (Graphics2D) g;
 
 		g2D.drawImage(background, 0, 0, null);
-		g2D.drawImage(player.getCurrentPose(), player.getCoordinate().x,
-				player.getCoordinate().y - Player.PLAYER_IMAGE_HEIGHT, null);
+		g2D.drawImage(player.getCurrentPose(), player.getCoordinate().x + X_RENDER_OFFSET,
+				player.getCoordinate().y - Player.PLAYER_IMAGE_HEIGHT + Y_RENDER_OFFSET, null);
 		g2D.drawImage(br.getTopBarrierImage(), 0, br.getTopBarrierY(), null);
 		g2D.drawImage(br.getBottomBarrierImage(), 0, br.getBottomBarrierY(), null);
 		update(getGraphics());
@@ -73,14 +75,10 @@ class Game extends JInternalFrame {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void keyTyped(KeyEvent e) {
-			// TODO Auto-generated method stub
-
 		}
 	}
 

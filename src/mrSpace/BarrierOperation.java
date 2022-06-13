@@ -305,6 +305,8 @@ public class BarrierOperation {
 				risingAnimationTimer.stop();
 				randomBarrier();
 				preparationAnimationTimer.restart();
+				player.getFallingAnimationTimer().restart();
+				player.setFallingAnimationListener(true);
 			}
 		}
 	}
