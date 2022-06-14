@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.BasicStroke;
 
-import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
@@ -36,8 +35,8 @@ public class BarrierOperation {
 			THREE_LIVING_SPACE_PROBABILITY;
 
 	private FallingAnimationListener fallingAnimationListener = new FallingAnimationListener();
-	private Timer fallingAnimationTimer = new Timer(5, fallingAnimationListener);
-	private int fallingVeloctiy = 50;
+	private Timer fallingAnimationTimer = new Timer(2, fallingAnimationListener);
+	private int fallingVeloctiy = 40;
 
 	private WaitDurationListener waitDurationListener = new WaitDurationListener();
 	private Timer waitDurationTimer = new Timer(500, waitDurationListener);
@@ -100,7 +99,7 @@ public class BarrierOperation {
 		bottomBarrier.drawOutLine(offset);
 
 		topBarrier.setY(-800);
-		// bottomBarrier.setY(-250);
+		bottomBarrier.setY(250);
 	}
 
 	public Image getTopBarrierImage() {
@@ -135,6 +134,10 @@ public class BarrierOperation {
 		topBarrier.setY(input);
 	}
 
+	public void setBottomBarrierY(int input) {
+		bottomBarrier.setY(input);
+	}
+
 	private void refresh() {
 		for (int i = 0; i < Barrier.TRAP_AMOUNT; i++) {
 			offset[i] = 0;
@@ -150,8 +153,8 @@ public class BarrierOperation {
 	public void barrierAnimation() {
 		randomBarrier();
 		preparationAnimationTimer.restart();
-		player.getInitialAnimationTimer().restart();
-		player.setInitialAnimationListener(true);
+		player.getRisingAnimationTimer().restart();
+		player.setRisingAnimaListener(true);
 	}
 
 	// --------------------Barrier class--------------------
@@ -299,10 +302,14 @@ public class BarrierOperation {
 	private class FallingAnimationListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			topBarrier.setY(topBarrier.getY() + fallingVeloctiy);
+			fallingVeloctiy += 10;
 			game.repaint();
+			System.out.println(topBarrier.getY());
 			if (topBarrier.getY() == 0) {
 				fallingAnimationTimer.stop();
-				System.out.println(livingSpace[player.getPosition()]);
+				fallingVeloctiy = 40;
+				player.setMovable(false);
+				player.setPose(random.nextInt(10, 12));
 				if (livingSpace[player.getPosition()]) {
 					waitDurationTimer.restart();
 				} else {
@@ -317,6 +324,7 @@ public class BarrierOperation {
 		public void actionPerformed(ActionEvent e) {
 			waitDurationTimer.stop();
 			risingAnimationTimer.restart();
+			player.getAirPoseTimer().restart();
 			player.getRisingAnimationTimer().restart();
 			player.setRisingAnimaListener(true);
 		}
@@ -325,6 +333,7 @@ public class BarrierOperation {
 	private class RisingAnimationListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			topBarrier.setY(topBarrier.getY() - risingVelocity);
+			bottomBarrier.setY(bottomBarrier.getY() + 25);
 			game.repaint();
 			if (topBarrier.getY() == -800) {
 				risingAnimationTimer.stop();
@@ -346,7 +355,7 @@ public class BarrierOperation {
 			}
 
 			topBarrier.setY(topBarrier.getY() + preparationVelocity);
-
+			bottomBarrier.setY(bottomBarrier.getY() - 25);
 			game.repaint();
 			if (topBarrier.getY() == -300) {
 				preparationAnimationTimer.stop();

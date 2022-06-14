@@ -84,6 +84,7 @@ class Game extends JInternalFrame {
 		public void keyPressed(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 				endgameRisingTimer.restart();
+				player.gameStart();
 			}
 		}
 
@@ -115,6 +116,7 @@ class Game extends JInternalFrame {
 			if (endgameBackgroundY == 0) {
 				endgameAnimationTimer.stop();
 				br.setTopBarrierY(-800);
+				br.setBottomBarrierY(250);
 			}
 		}
 	}
