@@ -132,6 +132,11 @@ public class Player {
 		return initialAnimationTimer;
 	}
 
+	public void dead() {
+		movable = false;
+		game.gameEnd();
+	}
+
 	public int getPosition() {
 		return position;
 	}

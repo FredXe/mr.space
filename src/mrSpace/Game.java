@@ -16,19 +16,31 @@ class Game extends JInternalFrame {
 
 	BarrierOperation br = new BarrierOperation(this);
 	Image background = new ImageIcon("src/background_color.png").getImage();
+	Image endgameBackground = null;
+	private int endgameBackgroundY = -800;
 
 	BarrierActionListener barrierActionListener = new BarrierActionListener();
-	Timer kickStartTimer = new Timer(2000, barrierActionListener);
+	Timer kickStartTimer = new Timer(500, barrierActionListener);
 
 	private Player player = new Player(this, br);
 
 	KeyListenerTest keyListenerTest = new KeyListenerTest();
 
+	private DeadHoldListener deadHoldListener = new DeadHoldListener();
+	private Timer deadHoldTimer = new Timer(500, deadHoldListener);
+
+	private EndgameAnimationListener endgameAnimationListener = new EndgameAnimationListener();
+	private Timer endgameAnimationTimer = new Timer(10, endgameAnimationListener);
+	private static final int BACKGROUND_FALLING_SPEED = 20;
+
+	private EndgameRisingListener endgameRisingListener = new EndgameRisingListener();
+	private Timer endgameRisingTimer = new Timer(10, endgameRisingListener);
+
 	private int X_RENDER_OFFSET = -5;
 	private int Y_RENDER_OFFSET = 10;
 
 	Game() {
-		kickStartTimer.start();
+		kickStartTimer.restart();
 		this.addKeyListener(keyListenerTest);
 		this.setSize(600, 800);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -44,6 +56,7 @@ class Game extends JInternalFrame {
 				player.getCoordinate().y - Player.PLAYER_IMAGE_HEIGHT + Y_RENDER_OFFSET, null);
 		g2D.drawImage(br.getTopBarrierImage(), 0, br.getTopBarrierY(), null);
 		g2D.drawImage(br.getBottomBarrierImage(), 0, br.getBottomBarrierY(), null);
+		g2D.drawImage(endgameBackground, 0, endgameBackgroundY, null);
 		update(getGraphics());
 	}
 
@@ -54,23 +67,24 @@ class Game extends JInternalFrame {
 	private class BarrierActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-
+			// System.out.println("ajhgfhjisgfd");
+			endgameBackground = null;
 			br.barrierAnimation();
 			kickStartTimer.stop();
 			// repaint();
 		}
 	}
 
+	public void gameEnd() {
+		deadHoldTimer.restart();
+	}
+
 	private class KeyListenerTest implements KeyListener {
 		@Override
 		public void keyPressed(KeyEvent e) {
-			// System.out.println(":D");
-			// if (e.getKeyChar() == ' ') {
-
-			// br.randomBarrier();
-			// br.barrierAnimation();
-			// repaint();
-			// }
+			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+				endgameRisingTimer.restart();
+			}
 		}
 
 		@Override
@@ -82,4 +96,38 @@ class Game extends JInternalFrame {
 		}
 	}
 
+	private class DeadHoldListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			deadHoldTimer.stop();
+			endgameBackgroundY = -800;
+			endgameBackground = new ImageIcon("src/endgame_background.png").getImage();
+			endgameAnimationTimer.restart();
+		}
+	}
+
+	private class EndgameAnimationListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("EndgameAnimation " + endgameBackgroundY + BACKGROUND_FALLING_SPEED);
+			endgameBackgroundY += BACKGROUND_FALLING_SPEED;
+			repaint();
+			if (endgameBackgroundY == 0) {
+				endgameAnimationTimer.stop();
+				br.setTopBarrierY(-800);
+			}
+		}
+	}
+
+	private class EndgameRisingListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			endgameBackgroundY -= BACKGROUND_FALLING_SPEED;
+			repaint();
+			if (endgameBackgroundY == -800) {
+				endgameRisingTimer.stop();
+				kickStartTimer.restart();
+			}
+		}
+	}
 }

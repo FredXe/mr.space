@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.BasicStroke;
 
+import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
@@ -37,6 +38,9 @@ public class BarrierOperation {
 	private FallingAnimationListener fallingAnimationListener = new FallingAnimationListener();
 	private Timer fallingAnimationTimer = new Timer(5, fallingAnimationListener);
 	private int fallingVeloctiy = 50;
+
+	private WaitDurationListener waitDurationListener = new WaitDurationListener();
+	private Timer waitDurationTimer = new Timer(500, waitDurationListener);
 
 	private RisingAnimationListener risingAnimationListener = new RisingAnimationListener();
 	private Timer risingAnimationTimer = new Timer(5, risingAnimationListener);
@@ -127,6 +131,10 @@ public class BarrierOperation {
 		player = input;
 	}
 
+	public void setTopBarrierY(int input) {
+		topBarrier.setY(input);
+	}
+
 	private void refresh() {
 		for (int i = 0; i < Barrier.TRAP_AMOUNT; i++) {
 			offset[i] = 0;
@@ -141,7 +149,7 @@ public class BarrierOperation {
 
 	public void barrierAnimation() {
 		randomBarrier();
-		preparationAnimationTimer.start();
+		preparationAnimationTimer.restart();
 		player.getInitialAnimationTimer().restart();
 		player.setInitialAnimationListener(true);
 	}
@@ -292,18 +300,25 @@ public class BarrierOperation {
 		public void actionPerformed(ActionEvent e) {
 			topBarrier.setY(topBarrier.getY() + fallingVeloctiy);
 			game.repaint();
-			// if(topBarrier.getY() == 0 && !livingSpace[player.getPosition()])
-			// {
-			// System.out.println("Dead");
-			// fallingAnimationTimer.stop();
-			// }
-			// else
 			if (topBarrier.getY() == 0) {
 				fallingAnimationTimer.stop();
-				risingAnimationTimer.restart();
-				player.getRisingAnimationTimer().restart();
-				player.setRisingAnimaListener(true);
+				System.out.println(livingSpace[player.getPosition()]);
+				if (livingSpace[player.getPosition()]) {
+					waitDurationTimer.restart();
+				} else {
+					player.dead();
+				}
 			}
+		}
+	}
+
+	private class WaitDurationListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			waitDurationTimer.stop();
+			risingAnimationTimer.restart();
+			player.getRisingAnimationTimer().restart();
+			player.setRisingAnimaListener(true);
 		}
 	}
 
@@ -347,7 +362,7 @@ public class BarrierOperation {
 	private class HoldDurationListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			holdDurationTimer.stop();
-			// fallingAnimationTimer.restart();
+			fallingAnimationTimer.restart();
 		}
 	}
 
