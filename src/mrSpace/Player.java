@@ -175,13 +175,10 @@ public class Player {
 		@Override
 		public void keyReleased(KeyEvent e) {
 			// System.out.println(":D");
-			if(e.getKeyCode() == KeyEvent.VK_RIGHT)
-			{
-				System.out.println("  right released and now coordinate : "+ coordinate.x);
-			}
-			else if(e.getKeyCode() == KeyEvent.VK_LEFT)
-			{
-				System.out.println("  left released and now coordinate : "+ coordinate.x);
+			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				System.out.println("  right released and now coordinate : " + coordinate.x);
+			} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+				System.out.println("  left released and now coordinate : " + coordinate.x);
 			}
 		}
 
@@ -199,7 +196,7 @@ public class Player {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (firstTime) {
-				coordinate.x = position * 50;
+				coordinate.x = (position + 1) * 50;
 				firstTime = false;
 			}
 
@@ -209,7 +206,6 @@ public class Player {
 				leftAnimationTimer.stop();
 				displacement = 0;
 				currentPose = poseBufferedImage[Player.STAND];
-				position--;
 				// movable = true;
 			}
 			game.repaint();
@@ -227,7 +223,7 @@ public class Player {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (firstTime) {
-				coordinate.x = position * 50;
+				coordinate.x = (position - 1) * 50;
 				firstTime = false;
 			}
 
@@ -237,7 +233,6 @@ public class Player {
 				rightAnimationTimer.stop();
 				displacement = 0;
 				currentPose = poseBufferedImage[Player.STAND];
-				position++;
 				// movable = true;
 			}
 			game.repaint();
@@ -263,6 +258,11 @@ public class Player {
 				movingSpeed = (movingSpeed == 0) ? 1 : movingSpeed;
 				coordinate.y = br.getBaseLine() + br.getOffset()[position];
 				count = 2;
+				if (isRight == PlayerVerticalAnimationListener.RIGHT) {
+					position++;
+				} else if (isRight == PlayerVerticalAnimationListener.LEFT) {
+					position--;
+				}
 				firstTime = false;
 			}
 			System.out.println("playerVerticalAnimation" + coordinate.y);
