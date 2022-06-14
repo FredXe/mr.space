@@ -13,6 +13,9 @@ import java.io.File;
 
 import javax.swing.Timer;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 public class Player {
 	public static final int STAND = 0;
@@ -147,6 +150,19 @@ public class Player {
 	public void dead() {
 		movable = false;
 		changePoseTimer.stop();
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					File deadFile = new File("src/sounds/dead.wav");
+					AudioInputStream deadAudioStream = AudioSystem.getAudioInputStream(deadFile);
+					Clip deadSound = AudioSystem.getClip();
+					deadSound.open(deadAudioStream);
+					deadSound.start();
+				} catch (Exception e) {
+					System.err.println(e.getMessage());
+				}
+			}
+		}).start();
 		game.gameEnd();
 	}
 
@@ -317,19 +333,26 @@ public class Player {
 		public void actionPerformed(ActionEvent e) {
 			if (firstTime) {
 				targetCoordinate.x = position * 50;
-				// count += 5;
 				firstTime = false;
+				new Thread(new Runnable() {
+					public void run() {
+						try {
+							File moveFile = new File("src/sounds/move.wav");
+							AudioInputStream moveAudioStream = AudioSystem.getAudioInputStream(moveFile);
+							Clip moveSound = AudioSystem.getClip();
+							moveSound.open(moveAudioStream);
+							moveSound.start();
+						} catch (Exception e) {
+							System.err.println(e.getMessage());
+						}
+					}
+				}).start();
 			}
 			System.out.println(" Left " + count);
 			coordinate.x = coordinate.x - MOVING_SPEED;
-			// displacement = displacement + MOVING_SPEED;
 			count--;
 			if (count == 0) {
-				// coordinate.x = position * 50;
-				// count = 0;
-
 				leftAnimationTimer.stop();
-				// currentPose = poseBufferedImage[Player.STAND];
 				if (br.getOffset()[position + 1] <= br.getOffset()[position]) {
 					playerVerticalAnimationListener.setFirstTime(true);
 					playerVerticalAnimationListener.setIsRight(PlayerVerticalAnimationListener.LEFT);
@@ -351,24 +374,27 @@ public class Player {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (firstTime) {
-				// coordinate.x = (position - 1) * 50;
 				targetCoordinate.x = position * 50;
-
-				// count += 5;
-
 				firstTime = false;
+				new Thread(new Runnable() {
+					public void run() {
+						try {
+							File moveFile = new File("src/sounds/move.wav");
+							AudioInputStream moveAudioStream = AudioSystem.getAudioInputStream(moveFile);
+							Clip moveSound = AudioSystem.getClip();
+							moveSound.open(moveAudioStream);
+							moveSound.start();
+						} catch (Exception e) {
+							System.err.println(e.getMessage());
+						}
+					}
+				}).start();
 			}
-
 			System.out.println(" Right " + count);
 			coordinate.x = coordinate.x + MOVING_SPEED;
-			// displacement = displacement + MOVING_SPEED;
 			count--;
 			if (count == 0) {
-				// coordinate.x = position * 50;
-				// count = 0;
-
 				rightAnimationTimer.stop();
-				// currentPose = poseBufferedImage[Player.STAND];
 				if (br.getOffset()[position - 1] <= br.getOffset()[position]) {
 					playerVerticalAnimationListener.setFirstTime(true);
 					playerVerticalAnimationListener.setIsRight(PlayerVerticalAnimationListener.RIGHT);

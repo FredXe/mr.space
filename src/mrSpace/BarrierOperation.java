@@ -1,7 +1,11 @@
 package mrSpace;
 
 import java.util.Random;
+import java.io.File;
+import java.io.IOException;
 
+import java.awt.GraphicsEnvironment;
+import java.awt.FontFormatException;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -10,6 +14,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.BasicStroke;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
@@ -177,6 +184,13 @@ public class BarrierOperation {
 		private int y = 0;
 
 		Barrier() {
+			try {
+				GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+				ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/tetai-2.ttf")));
+			} catch (IOException | FontFormatException e) {
+				// Handle exception
+			}
+
 			instantBufferedImage = Tool.toBufferedImage(ORIGIN_IMAGE);
 		}
 
@@ -291,9 +305,9 @@ public class BarrierOperation {
 		private void drawScore() {
 			Graphics2D g2D = (Graphics2D) instantBufferedImage.getGraphics();
 			g2D.setColor(new Color(0x403416));
-			g2D.setFont(new Font("Chiller", Font.BOLD, 50));
-			g2D.drawString("STAGE", 450, 700);
-			g2D.drawString(String.valueOf(game.getScore()), 450, 750);
+			g2D.setFont(new Font("特太行書", Font.BOLD, 50));
+			g2D.drawString("STAGE", 430, 705);
+			g2D.drawString(String.valueOf(game.getScore()), 560 - (String.valueOf(game.getScore()).length() * 25), 755);
 		}
 
 		public void setY(int inputY) {
@@ -322,8 +336,22 @@ public class BarrierOperation {
 				player.setMovable(false);
 				player.setPose(random.nextInt(10, 12));
 				if (livingSpace[player.getPosition()]) {
+					new Thread(new Runnable() {
+						public void run() {
+							try {
+								File barrierFile = new File("src/sounds/barrier.wav");
+								AudioInputStream moveAudioStream = AudioSystem.getAudioInputStream(barrierFile);
+								Clip barrierSound = AudioSystem.getClip();
+								barrierSound.open(moveAudioStream);
+								barrierSound.start();
+							} catch (Exception e) {
+								System.err.println(e.getMessage());
+							}
+						}
+					}).start();
 					waitDurationTimer.restart();
 				} else {
+					// waitDurationTimer.restart();
 					player.dead();
 				}
 			}
@@ -335,6 +363,7 @@ public class BarrierOperation {
 		public void actionPerformed(ActionEvent e) {
 			waitDurationTimer.stop();
 			risingAnimationTimer.restart();
+			game.setScore(game.getScore() + 1);
 			player.getAirPoseTimer().restart();
 			player.getRisingAnimationTimer().restart();
 			player.setRisingAnimaListener(true);
