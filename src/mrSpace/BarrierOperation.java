@@ -1,6 +1,8 @@
 package mrSpace;
 
 import java.util.Random;
+
+import java.awt.Font;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -97,6 +99,7 @@ public class BarrierOperation {
 		topBarrier.drawOutLine(offset, livingSpaceHeight);
 		bottomBarrier.transparency(offset);
 		bottomBarrier.drawOutLine(offset);
+		bottomBarrier.drawScore();
 
 		topBarrier.setY(-800);
 		bottomBarrier.setY(250);
@@ -283,6 +286,14 @@ public class BarrierOperation {
 
 				g2D.drawLine(x1, y1, x2, y2);
 			}
+		}
+
+		private void drawScore() {
+			Graphics2D g2D = (Graphics2D) instantBufferedImage.getGraphics();
+			g2D.setColor(new Color(0x403416));
+			g2D.setFont(new Font("Chiller", Font.BOLD, 50));
+			g2D.drawString("STAGE", 450, 700);
+			g2D.drawString(String.valueOf(game.getScore()), 450, 750);
 		}
 
 		public void setY(int inputY) {

@@ -24,6 +24,8 @@ class Game extends JInternalFrame {
 
 	private Player player = new Player(this, br);
 
+	private int score = 0;
+
 	KeyListenerTest keyListenerTest = new KeyListenerTest();
 
 	private DeadHoldListener deadHoldListener = new DeadHoldListener();
@@ -40,6 +42,8 @@ class Game extends JInternalFrame {
 	private int Y_RENDER_OFFSET = 10;
 
 	Game() {
+		setScore(0);
+
 		kickStartTimer.restart();
 		this.addKeyListener(keyListenerTest);
 		this.setSize(600, 800);
@@ -60,6 +64,14 @@ class Game extends JInternalFrame {
 		update(getGraphics());
 	}
 
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
 	public void update(Graphics g) {
 
 	}
@@ -68,6 +80,7 @@ class Game extends JInternalFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// System.out.println("ajhgfhjisgfd");
+			score = 0;
 			endgameBackground = null;
 			br.barrierAnimation();
 			kickStartTimer.stop();
@@ -110,7 +123,6 @@ class Game extends JInternalFrame {
 	private class EndgameAnimationListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("EndgameAnimation " + endgameBackgroundY + BACKGROUND_FALLING_SPEED);
 			endgameBackgroundY += BACKGROUND_FALLING_SPEED;
 			repaint();
 			if (endgameBackgroundY == 0) {

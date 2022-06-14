@@ -194,10 +194,7 @@ public class Player {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
-			System.out.print(" " + position + " " + movable);
-			// System.out.println(e.getKeyCode());
 			if (movable) {
-				// movable = false;
 				if ((e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) && position > 0) {
 					position--;
 					boolean isYGoingUp = br.getOffset()[position + 1] > br.getOffset()[position];
@@ -229,17 +226,15 @@ public class Player {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			// System.out.println(":D");
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				System.out.println(" right released and now coordinate : " + coordinate.x);
+				// System.out.println(" right released and now coordinate : " + coordinate.x);
 			} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-				System.out.println(" left released and now coordinate : " + coordinate.x);
+				// System.out.println(" left released and now coordinate : " + coordinate.x);
 			}
 		}
 
 		@Override
 		public void keyTyped(KeyEvent e) {
-			// System.out.println(":D");
 
 		}
 	}
@@ -396,7 +391,6 @@ public class Player {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (firstTime) {
-				// System.out.println("risingAnimation " + risingSpeed);
 				airPoseTimer.restart();
 				risingSpeed = 450 - coordinate.y;
 				risingSpeed -= risingSpeed / 3;
@@ -409,6 +403,7 @@ public class Player {
 				risingAnimationTimer.stop();
 				initialAnimationListener.setFirstTime(true);
 				initialAnimationTimer.restart();
+
 			}
 		}
 
@@ -424,21 +419,19 @@ public class Player {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (firstTime) {
-				// System.out.println("InitialAnimation");
 				coordinate.x = position * 50;
 				initialSpeed = (300 - coordinate.x) / 10;
 				firstTime = false;
 			}
 			coordinate.x = coordinate.x + initialSpeed;
 			game.repaint();
-			// System.out.println(coordinate.x);
 			if (coordinate.x == 300) {
 				position = 6;
 				targetCoordinate.x = position * 50;
-				System.out.println(":D");
 				initialAnimationTimer.stop();
 				fallingAnimationListener.setFirstTime(true);
 				fallingAnimationTimer.restart();
+				airPoseTimer.stop();
 			}
 		}
 
@@ -457,16 +450,13 @@ public class Player {
 				fallingSpeed = (br.getOffset()[6] + br.getBaseLine() - coordinate.y) / 6;
 				firstTime = false;
 				coordinate.y += (br.getOffset()[6] + br.getBaseLine() - coordinate.y) % 6;
-				airPoseTimer.restart();
+				// airPoseTimer.restart();
 			}
 			coordinate.y = coordinate.y + fallingSpeed;
 			game.repaint();
-			// System.out.println(coordinate.y);
 			if (coordinate.y >= br.getOffset()[6] + br.getBaseLine()) {
 				fallingAnimationTimer.stop();
-				// System.out.println("fallingAnimation stopped " + coordinate.y);
 				movable = true;
-				airPoseTimer.stop();
 				changePoseTimer.restart();
 			}
 		}
