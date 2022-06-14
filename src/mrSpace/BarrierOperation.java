@@ -143,7 +143,7 @@ public class BarrierOperation {
 		randomBarrier();
 		preparationAnimationTimer.start();
 		player.getInitialAnimationTimer().restart();
-		player.setRisingAnimaListener(true);
+		player.setInitialAnimationListener(true);
 	}
 
 	// --------------------Barrier class--------------------
@@ -313,16 +313,23 @@ public class BarrierOperation {
 			game.repaint();
 			if (topBarrier.getY() == -800) {
 				risingAnimationTimer.stop();
-				randomBarrier();
+				preparationAnimationListener.setFirstTime(true);
 				preparationAnimationTimer.restart();
-				player.getFallingAnimationTimer().restart();
-				player.setFallingAnimationListener(true);
 			}
 		}
 	}
 
 	private class PreparationAnimationListener implements ActionListener {
+		private boolean firstTime = false;
+
 		public void actionPerformed(ActionEvent e) {
+			if (firstTime) {
+				player.getFallingAnimationTimer().restart();
+				player.setFallingAnimationListener(true);
+				randomBarrier();
+				firstTime = false;
+			}
+
 			topBarrier.setY(topBarrier.getY() + preparationVelocity);
 
 			game.repaint();
@@ -331,12 +338,16 @@ public class BarrierOperation {
 				holdDurationTimer.restart();
 			}
 		}
+
+		public void setFirstTime(boolean input) {
+			firstTime = input;
+		}
 	}
 
 	private class HoldDurationListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			holdDurationTimer.stop();
-			fallingAnimationTimer.restart();
+			// fallingAnimationTimer.restart();
 		}
 	}
 

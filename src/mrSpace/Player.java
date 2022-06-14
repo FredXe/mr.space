@@ -39,16 +39,17 @@ public class Player {
 
 	private Image currentPose;
 	private Point coordinate;
+	private Point targetCoordinate;
 	private int position;
 	private boolean movable = false;
 
 	private static final int MOVING_SPEED = 10;
-	private static final int MOVING_TIME = 8;
+	private static final int MOVING_TIME = 3;
 
 	private MovingKeyListener movingKeyListener = new MovingKeyListener();
 
 	private PlayerVerticalAnimationListener playerVerticalAnimationListener = new PlayerVerticalAnimationListener();
-	private Timer playerVerticalAnimationTimer = new Timer(10, playerVerticalAnimationListener);
+	private Timer playerVerticalAnimationTimer = new Timer(1, playerVerticalAnimationListener);
 
 	private LeftAnimationListener leftAnimationListener = new LeftAnimationListener();
 	private Timer leftAnimationTimer = new Timer(MOVING_TIME, leftAnimationListener);
@@ -102,7 +103,9 @@ public class Player {
 
 		currentPose = poseBufferedImage[Player.STAND];
 		coordinate = new Point(500, 450);
+		targetCoordinate = new Point();
 		position = coordinate.x / 50;
+		targetCoordinate.setLocation(coordinate);
 
 		// pose = new BufferedImage[1];
 		// pose[Player.STAND] = new ImageIcon("src/playerImage/stand.png").getImage();
@@ -141,33 +144,45 @@ public class Player {
 		risingAnimationListener.setFirstTime(input);
 	}
 
+	public void setInitialAnimationListener(boolean input) {
+		initialAnimationListener.setFirstTime(input);
+	}
+
 	public void setFallingAnimationListener(boolean input) {
 		fallingAnimationListener.setFirstTime(input);
 	}
 
 	private class MovingKeyListener implements KeyListener {
+
 		@Override
 		public void keyPressed(KeyEvent e) {
-			System.out.print(position + " " + movable);
+			System.out.print(" " + position + " " + movable);
 			// System.out.println(e.getKeyCode());
 			if (movable) {
 				// movable = false;
-				if ((e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) && position > 0
-						&& !playerVerticalAnimationTimer.isRunning()
-						&& !leftAnimationTimer.isRunning()) {
-					playerVerticalAnimationListener.setFirstTime(true);
-					playerVerticalAnimationListener.setIsRight(PlayerVerticalAnimationListener.LEFT);
-					playerVerticalAnimationTimer.restart();
-
-					currentPose = poseBufferedImage[Player.LEFT];
-				} else if ((e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) && position < 11
-						&& !playerVerticalAnimationTimer.isRunning()
-						&& !rightAnimationTimer.isRunning()) {
-					playerVerticalAnimationListener.setFirstTime(true);
-					playerVerticalAnimationListener.setIsRight(PlayerVerticalAnimationListener.RIGHT);
-					playerVerticalAnimationTimer.restart();
-
-					currentPose = poseBufferedImage[Player.RIGHT];
+				if ((e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) && position > 0) {
+					position--;
+					boolean isYGoingUp = br.getOffset()[position + 1] > br.getOffset()[position];
+					if (isYGoingUp) {
+						System.out.println(":(");
+						playerVerticalAnimationListener.setFirstTime(true);
+						playerVerticalAnimationListener.setIsRight(PlayerVerticalAnimationListener.LEFT);
+						playerVerticalAnimationTimer.restart();
+					} else {
+						leftAnimationListener.setFirstTime(true);
+						leftAnimationTimer.restart();
+					}
+				} else if ((e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) && position < 11) {
+					position++;
+					boolean isYGoingUp = br.getOffset()[position - 1] > br.getOffset()[position];
+					if (isYGoingUp) {
+						playerVerticalAnimationListener.setFirstTime(true);
+						playerVerticalAnimationListener.setIsRight(PlayerVerticalAnimationListener.RIGHT);
+						playerVerticalAnimationTimer.restart();
+					} else {
+						rightAnimationListener.setFirstTime(true);
+						rightAnimationTimer.restart();
+					}
 				}
 			}
 		}
@@ -176,9 +191,9 @@ public class Player {
 		public void keyReleased(KeyEvent e) {
 			// System.out.println(":D");
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				System.out.println("  right released and now coordinate : " + coordinate.x);
+				// System.out.println(" right released and now coordinate : " + coordinate.x);
 			} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-				System.out.println("  left released and now coordinate : " + coordinate.x);
+				// System.out.println(" left released and now coordinate : " + coordinate.x);
 			}
 		}
 
@@ -189,24 +204,78 @@ public class Player {
 		}
 	}
 
+	private class PlayerVerticalAnimationListener implements ActionListener {
+		public static final int RIGHT = 1;
+		public static final int LEFT = -1;
+		private boolean firstTime = false;
+		private int movingSpeed = 0;
+		private int isRight = 1;
+		private int count = 0;
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (firstTime) {
+				movingSpeed = (br.getOffset()[position - isRight] - br.getOffset()[position]) / 2;
+				coordinate.y = br.getBaseLine() + br.getOffset()[position - isRight];
+				coordinate.y += (br.getBaseLine() - br.getOffset()[position - isRight]) % 2;
+				count += 2;
+				targetCoordinate.y = br.getBaseLine() + br.getOffset()[position];
+				firstTime = false;
+			}
+			System.out.println("playerVerticalAnimation " + coordinate.y);
+			coordinate.y = coordinate.y - movingSpeed;
+			game.repaint();
+			count--;
+			if (count == 0) {
+				movingSpeed = 0;
+				playerVerticalAnimationTimer.stop();
+				if (isRight == 1) {
+					if (br.getOffset()[position - 1] > br.getOffset()[position]) {
+						rightAnimationListener.setFirstTime(true);
+						rightAnimationTimer.restart();
+					}
+				} else {
+					if (br.getOffset()[position + 1] > br.getOffset()[position]) {
+						leftAnimationListener.setFirstTime(true);
+						leftAnimationTimer.restart();
+					}
+				}
+			}
+		}
+
+		public void setIsRight(int input) {
+			isRight = input;
+		}
+
+		public void setFirstTime(boolean input) {
+			firstTime = input;
+		}
+	}
+
 	private class LeftAnimationListener implements ActionListener {
 		private boolean firstTime = false;
-		private int displacement;
+		private int count = 0;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (firstTime) {
 				coordinate.x = (position + 1) * 50;
+				targetCoordinate.x = position * 50;
+				count += 5;
 				firstTime = false;
 			}
 
 			coordinate.x = coordinate.x - MOVING_SPEED;
-			displacement = displacement + MOVING_SPEED;
-			if (displacement == 50) {
+			// displacement = displacement + MOVING_SPEED;
+			count--;
+			if (coordinate.x == targetCoordinate.x) {
 				leftAnimationTimer.stop();
-				displacement = 0;
-				currentPose = poseBufferedImage[Player.STAND];
-				// movable = true;
+				// currentPose = poseBufferedImage[Player.STAND];
+				if (br.getOffset()[position + 1] <= br.getOffset()[position]) {
+					playerVerticalAnimationListener.setFirstTime(true);
+					playerVerticalAnimationListener.setIsRight(PlayerVerticalAnimationListener.LEFT);
+					playerVerticalAnimationTimer.restart();
+				}
 			}
 			game.repaint();
 		}
@@ -218,72 +287,30 @@ public class Player {
 
 	private class RightAnimationListener implements ActionListener {
 		private boolean firstTime = false;
-		private int displacement;
+		private int count = 0;
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (firstTime) {
 				coordinate.x = (position - 1) * 50;
+				targetCoordinate.x = position * 50;
+				count += 5;
 				firstTime = false;
 			}
 
 			coordinate.x = coordinate.x + MOVING_SPEED;
-			displacement = displacement + MOVING_SPEED;
-			if (displacement == 50) {
-				rightAnimationTimer.stop();
-				displacement = 0;
-				currentPose = poseBufferedImage[Player.STAND];
-				// movable = true;
-			}
-			game.repaint();
-		}
-
-		public void setFirstTime(boolean input) {
-			firstTime = input;
-		}
-	}
-
-	private class PlayerVerticalAnimationListener implements ActionListener {
-		public static final int RIGHT = 1;
-		public static final int LEFT = -1;
-		private boolean firstTime = false;
-		private int movingSpeed = 0;
-		private int isRight = 1;
-		private int count = 2;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (firstTime) {
-				movingSpeed = (br.getOffset()[position] - br.getOffset()[position + isRight]) / 2;
-				movingSpeed = (movingSpeed == 0) ? 1 : movingSpeed;
-				coordinate.y = br.getBaseLine() + br.getOffset()[position];
-				count = 2;
-				if (isRight == PlayerVerticalAnimationListener.RIGHT) {
-					position++;
-				} else if (isRight == PlayerVerticalAnimationListener.LEFT) {
-					position--;
-				}
-				firstTime = false;
-			}
-			System.out.println("playerVerticalAnimation" + coordinate.y);
-			coordinate.y = coordinate.y - movingSpeed;
-			game.repaint();
+			// displacement = displacement + MOVING_SPEED;
 			count--;
-			if (count == 0) {
-				movingSpeed = 0;
-				playerVerticalAnimationTimer.stop();
-				if (isRight == 1) {
-					rightAnimationListener.setFirstTime(true);
-					rightAnimationTimer.restart();
-				} else {
-					leftAnimationListener.setFirstTime(true);
-					leftAnimationTimer.restart();
+			if (coordinate.x == targetCoordinate.x) {
+				rightAnimationTimer.stop();
+				// currentPose = poseBufferedImage[Player.STAND];
+				if (br.getOffset()[position - 1] <= br.getOffset()[position]) {
+					playerVerticalAnimationListener.setFirstTime(true);
+					playerVerticalAnimationListener.setIsRight(PlayerVerticalAnimationListener.RIGHT);
+					playerVerticalAnimationTimer.restart();
 				}
 			}
-		}
-
-		public void setIsRight(int input) {
-			isRight = input;
+			game.repaint();
 		}
 
 		public void setFirstTime(boolean input) {
@@ -299,7 +326,7 @@ public class Player {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (firstTime) {
-				System.out.println("risingAnimation " + risingSpeed);
+				// System.out.println("risingAnimation " + risingSpeed);
 				movable = false;
 				firstTime = false;
 			}
@@ -326,7 +353,7 @@ public class Player {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (firstTime) {
-				System.out.println("InitialAnimation");
+				// System.out.println("InitialAnimation");
 				coordinate.x = position * 50;
 				initialSpeed = (300 - coordinate.x) / 10;
 				firstTime = false;
@@ -336,8 +363,11 @@ public class Player {
 			// System.out.println(coordinate.x);
 			if (coordinate.x == 300) {
 				position = 6;
+				targetCoordinate.x = position * 50;
 				System.out.println(":D");
 				initialAnimationTimer.stop();
+				fallingAnimationListener.setFirstTime(true);
+				fallingAnimationTimer.restart();
 			}
 		}
 
@@ -355,8 +385,6 @@ public class Player {
 			if (firstTime) {
 				fallingSpeed = (br.getOffset()[6] + br.getBaseLine() - coordinate.y) / 6;
 				firstTime = false;
-				System.out.println("fallingAnimation "
-						+ (br.getOffset()[6] + br.getBaseLine()) + " ");
 				coordinate.y = coordinate.y
 						+ (br.getOffset()[6] + br.getBaseLine() - coordinate.y) % 6;
 				System.out.println(fallingSpeed);
@@ -366,7 +394,7 @@ public class Player {
 			// System.out.println(coordinate.y);
 			if (coordinate.y >= br.getOffset()[6] + br.getBaseLine()) {
 				fallingAnimationTimer.stop();
-				System.out.println("fallingAnimation stopped " + coordinate.y);
+				// System.out.println("fallingAnimation stopped " + coordinate.y);
 				movable = true;
 			}
 		}
