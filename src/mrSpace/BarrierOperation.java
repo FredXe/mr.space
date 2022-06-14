@@ -96,6 +96,7 @@ public class BarrierOperation {
 		bottomBarrier.drawOutLine(offset);
 
 		topBarrier.setY(-800);
+//		bottomBarrier.setY(-250);
 	}
 
 	public Image getTopBarrierImage() {
@@ -121,7 +122,7 @@ public class BarrierOperation {
 	public int getBaseLine() {
 		return Barrier.BASE_LINE;
 	}
-
+	
 	public void setPlayer(Player input) {
 		player = input;
 	}
@@ -133,7 +134,12 @@ public class BarrierOperation {
 			livingSpaceHeight[i] = 0;
 		}
 	}
-
+	
+	public boolean[] getLivingSpace()
+	{
+		return livingSpace;
+	}
+	
 	public void barrierAnimation() {
 		randomBarrier();
 		preparationAnimationTimer.start();
@@ -287,13 +293,17 @@ public class BarrierOperation {
 		public void actionPerformed(ActionEvent e) {
 			topBarrier.setY(topBarrier.getY() + fallingVeloctiy);
 			game.repaint();
-			if (topBarrier.getY() == 0) {
+			if(topBarrier.getY() == 0 && !livingSpace[player.getPosition()])
+			{
+				System.out.println("Dead");
+				fallingAnimationTimer.stop();
+			}
+			else if (topBarrier.getY() == 0) {
 				fallingAnimationTimer.stop();
 				risingAnimationTimer.restart();
 				player.getRisingAnimationTimer().restart();
 				player.setRisingAnimaListener(true);
 			}
-
 		}
 	}
 
@@ -314,6 +324,7 @@ public class BarrierOperation {
 	private class PreparationAnimationListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			topBarrier.setY(topBarrier.getY() + preparationVelocity);
+			
 			game.repaint();
 			if (topBarrier.getY() == -300) {
 				preparationAnimationTimer.stop();

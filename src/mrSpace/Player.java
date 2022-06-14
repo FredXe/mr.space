@@ -175,7 +175,14 @@ public class Player {
 		@Override
 		public void keyReleased(KeyEvent e) {
 			// System.out.println(":D");
-
+			if(e.getKeyCode() == KeyEvent.VK_RIGHT)
+			{
+				System.out.println("  right released and now coordinate : "+ coordinate.x);
+			}
+			else if(e.getKeyCode() == KeyEvent.VK_LEFT)
+			{
+				System.out.println("  left released and now coordinate : "+ coordinate.x);
+			}
 		}
 
 		@Override
