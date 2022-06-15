@@ -132,7 +132,7 @@ class Game extends JInternalFrame {
 		g2D.setColor(Color.BLACK);
 		g2D.setFont(new Font("特太行書", Font.BOLD, 45));
 
-		fileScore[3] = score;
+		fileScore[0] = score;
 		Arrays.sort(fileScore);
 		g2D.drawString(String.valueOf(fileScore[3]), 410 - (String.valueOf(fileScore[3]).length() * 25), 488);
 		g2D.drawString(String.valueOf(fileScore[2]), 410 - (String.valueOf(fileScore[2]).length() * 25), 563);
