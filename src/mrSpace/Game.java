@@ -2,6 +2,7 @@ package mrSpace;
 
 import java.util.Arrays;
 import java.io.File;
+import javax.swing.JFrame;
 import javax.swing.Timer;
 import javax.swing.JInternalFrame;
 import javax.swing.ImageIcon;
@@ -23,9 +24,10 @@ import java.awt.event.KeyListener;
 class Game extends JInternalFrame {
 
 	BarrierOperation br = new BarrierOperation(this);
-	Image background = new ImageIcon("src/background_color.png").getImage();
+	Image background = new ImageIcon("src/background_image/background_color.png").getImage();
 	Image endgameBackground = null;
 	private int endgameBackgroundY = -800;
+	private boolean end = false;
 
 	private Clip gameMusic;
 
@@ -46,13 +48,16 @@ class Game extends JInternalFrame {
 	private Timer endgameAnimationTimer = new Timer(10, endgameAnimationListener);
 	private static final int BACKGROUND_FALLING_SPEED = 20;
 
-	private EndgameRisingListener endgameRisingListener = new EndgameRisingListener();
+	private EndgameRisingListener endgameRisingListener = new EndgameRisingListener(this);
 	private Timer endgameRisingTimer = new Timer(10, endgameRisingListener);
 
 	private int X_RENDER_OFFSET = -5;
 	private int Y_RENDER_OFFSET = 10;
 
-	Game() {
+	public Menu menu;
+
+	Game(Menu input) {
+		menu = input;
 		setScore(0);
 		setSound();
 
@@ -102,6 +107,7 @@ class Game extends JInternalFrame {
 	private class BarrierActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			end = false;
 			gameMusic.start();
 			score = 0;
 			endgameBackground = null;
@@ -145,9 +151,11 @@ class Game extends JInternalFrame {
 	private class KeyListenerTest implements KeyListener {
 		@Override
 		public void keyPressed(KeyEvent e) {
-			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+			if (end) {
+				System.out.print("ads");
 				endgameRisingTimer.restart();
-				player.gameStart();
+
+				end = false;
 			}
 		}
 
@@ -180,18 +188,37 @@ class Game extends JInternalFrame {
 				endgameAnimationTimer.stop();
 				br.setTopBarrierY(-800);
 				br.setBottomBarrierY(250);
+				end = true;
 			}
 		}
 	}
 
 	private class EndgameRisingListener implements ActionListener {
+		public Game game;
+
+		EndgameRisingListener(Game input) {
+			game = input;
+		}
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			endgameBackgroundY -= BACKGROUND_FALLING_SPEED;
 			repaint();
 			if (endgameBackgroundY == -800) {
 				endgameRisingTimer.stop();
-				kickStartTimer.restart();
+				// Menu.menuf.remove(game);
+				// menu.set_frame();
+				// menu.set_background();
+				// menu.set_button();
+				// menu.getBackgroundMusic().start();
+				// Menu.menuf.setVisible(true);
+				// menu.anime.setpanel();?
+				// Menu.menuf.repaint();
+
+				// Menu.visible();
+				// Menu.menuf.repaint();
+				menu.menuf.dispose();
+				Menu menu_ = new Menu();
 			}
 		}
 	}

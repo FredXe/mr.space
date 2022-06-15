@@ -170,7 +170,7 @@ public class BarrierOperation {
 	// --------------------Barrier class--------------------
 
 	private class Barrier {
-		final private static Image ORIGIN_IMAGE = new ImageIcon("src/background.png").getImage();
+		final private static Image ORIGIN_IMAGE = new ImageIcon("src/background_image/background.png").getImage();
 		private BufferedImage instantBufferedImage = Tool.toBufferedImage(ORIGIN_IMAGE);
 		private Image instantImage = null;
 
