@@ -5,7 +5,11 @@ import javax.swing.JFrame;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.File;
 
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.FontFormatException;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -14,6 +18,12 @@ public class Main {
 		/* ºg¿… */
 		FileReader record_fr = new FileReader("src/record.txt");
 		BufferedReader rea = new BufferedReader(record_fr);
+		try {
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/tetai-2.ttf")));
+		} catch (IOException | FontFormatException e) {
+			// Handle exception
+		}
 		int index = 0;
 		String str = rea.readLine();
 		while (str != null) {

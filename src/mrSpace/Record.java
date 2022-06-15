@@ -69,7 +69,6 @@ public class Record implements MouseListener {
 				try {
 					record_fr = new FileWriter("src/record.txt");
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} // C:/Users/alo20/source/eclipse-workspace/project/src/record.txt
 				BufferedWriter bw = new BufferedWriter(record_fr);
@@ -84,7 +83,6 @@ public class Record implements MouseListener {
 					bw.flush();
 					bw.close();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
@@ -118,39 +116,39 @@ public class Record implements MouseListener {
 		String str = Integer.toString(arr.score[3]);
 		one.setText(str);
 		one.setForeground(new Color(0xFFFFFF));
-		one.setFont(new Font("STZhongsong", Font.BOLD, 40));
-		one.setBounds(337, 313, 150, 150);
+		one.setFont(new Font("特太行書", Font.BOLD, 45));
+		one.setBounds(413 - (str.length() * 25), 310, 150, 150);
 		background.add(one);
 		JLabel one_shadow = new JLabel();
 		one_shadow.setText(str);
-		one_shadow.setFont(new Font("STZhongsong", Font.BOLD, 40));
-		one_shadow.setBounds(339, 315, 150, 150);
+		one_shadow.setFont(new Font("特太行書", Font.BOLD, 45));
+		one_shadow.setBounds(415 - (str.length() * 25), 312, 150, 150);
 		background.add(one_shadow);
 
 		JLabel two = new JLabel();
 		str = Integer.toString(arr.score[2]);
 		two.setText(str);
 		two.setForeground(new Color(0xFFFFFF));
-		two.setFont(new Font("STZhongsong", Font.BOLD, 40));
-		two.setBounds(337, 387, 150, 150);
+		two.setFont(new Font("特太行書", Font.BOLD, 45));
+		two.setBounds(413 - (str.length() * 25), 387, 150, 150);
 		background.add(two);
 		JLabel two_shadow = new JLabel();
 		two_shadow.setText(str);
-		two_shadow.setFont(new Font("STZhongsong", Font.BOLD, 40));
-		two_shadow.setBounds(339, 389, 150, 150);
+		two_shadow.setFont(new Font("特太行書", Font.BOLD, 45));
+		two_shadow.setBounds(415 - (str.length() * 25), 389, 150, 150);
 		background.add(two_shadow);
 
 		JLabel three = new JLabel();
 		str = Integer.toString(arr.score[1]);
 		three.setText(str);
 		three.setForeground(new Color(0xFFFFFF));
-		three.setFont(new Font("STZhongsong", Font.BOLD, 40));
-		three.setBounds(337, 465, 150, 150);
+		three.setFont(new Font("特太行書", Font.BOLD, 45));
+		three.setBounds(413 - (str.length() * 25), 465, 150, 150);
 		background.add(three);
 		JLabel three_shadow = new JLabel();
 		three_shadow.setText(str);
-		three_shadow.setFont(new Font("STZhongsong", Font.BOLD, 40));
-		three_shadow.setBounds(339, 467, 150, 150);
+		three_shadow.setFont(new Font("特太行書", Font.BOLD, 45));
+		three_shadow.setBounds(415 - (str.length() * 25), 467, 150, 150);
 		background.add(three_shadow);
 
 	}

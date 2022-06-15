@@ -60,7 +60,7 @@ class Game extends JInternalFrame {
 		menu = input;
 		setScore(0);
 		setSound();
-
+		fileScore = arr.score;
 		kickStartTimer.restart();
 		this.addKeyListener(keyListenerTest);
 		this.setSize(600, 800);
@@ -146,6 +146,8 @@ class Game extends JInternalFrame {
 		g2D.drawString(String.valueOf(fileScore[1]), 410 - (String.valueOf(fileScore[1]).length() * 25) + offset,
 				643 + offset);
 		endgameBackground = bf;
+		arr.score = fileScore;
+
 	}
 
 	private class KeyListenerTest implements KeyListener {

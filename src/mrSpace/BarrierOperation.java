@@ -184,12 +184,6 @@ public class BarrierOperation {
 		private int y = 0;
 
 		Barrier() {
-			try {
-				GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-				ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/tetai-2.ttf")));
-			} catch (IOException | FontFormatException e) {
-				// Handle exception
-			}
 
 			instantBufferedImage = Tool.toBufferedImage(ORIGIN_IMAGE);
 		}
